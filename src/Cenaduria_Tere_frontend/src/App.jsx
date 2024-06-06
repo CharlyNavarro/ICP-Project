@@ -1,31 +1,52 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Cenaduria_Tere_backend } from 'declarations/Cenaduria_Tere_backend';
+import Table from 'react-bootstrap/Table';
+
 
 function App() {
-  const [greeting, setGreeting] = useState('');
+  const [reservs, setReservs] = useState([]);
+  
+  useEffect (() => {
+    ListaReservacion();
+    }, [] )
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    Cenaduria_Tere_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
+ function ListaReservacion() {
+      Cenaduria_Tere_backend.listaReserv().then(reservs => {
+        setReservs(reservs);
+      });
+    
+  };
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
-  );
+  <Table striped bordered hover>
+    <thead>
+      <tr>
+        <th>Número de reservación</th>
+        <th>Nombre del comensal</th>
+        <th>Número de asientos</th>
+        <th>Número de mesas</th>
+        <th>Fecha</th>
+        <th>Hora</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+
+        reservs.length > 0?
+        reservs.map((rsv) => (
+          <tr>
+            <td>{rsv.numero}</td>
+            <td>{rsv.nombre}</td>
+            <td>{rsv.asientos}</td>
+            <td>{rsv.mesas}</td>
+            <td>*Fecha*</td>
+            <td>*Hora*</td>
+          </tr>
+        ))
+        :<tr></tr>
+      }
+    </tbody>
+  </Table>);
 }
 
 export default App;

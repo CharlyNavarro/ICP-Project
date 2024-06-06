@@ -9,6 +9,7 @@ import './index.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Total from './Total';
 
+
 const router = createBrowserRouter([
   {
     path: "/",

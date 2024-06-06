@@ -4,12 +4,11 @@ export const Total = () => {
     return (
         <Container>
             <Col>
-                <h1>reservaciones totales</h1>
-                <Row>Agregar</Row>
-                <Row>Eliminar</Row>
-                <Row>Editar</Row>
+                <h1>Reservaciones totales</h1>
+                
             </Col>
         </Container>
+    
     )
     
 }
