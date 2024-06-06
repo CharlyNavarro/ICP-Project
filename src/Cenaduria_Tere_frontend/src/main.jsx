@@ -8,6 +8,7 @@ import App from './App';
 import './index.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Total from './Total';
+import Create from './Create';
 
 
 const router = createBrowserRouter([
@@ -16,8 +17,8 @@ const router = createBrowserRouter([
     element: <App></App>,
   },
   {
-    path: "/exam",
-    element: <div>ejemplo </div>,
+    path: "/crear",
+    element: <Create></Create>,
   },
   {
     path: "/reservTotal",
