@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "Cenaduria_Tere_backend": {
+      "main": "src/Cenaduria_Tere_backend/main.mo",
+      "type": "motoko"
+    },
+    "Cenaduria_Tere_frontend": {
+      "dependencies": [
+        "Cenaduria_Tere_backend"
+      ],
+      "source": [
+        "src/Cenaduria_Tere_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "Cenaduria_Tere_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
