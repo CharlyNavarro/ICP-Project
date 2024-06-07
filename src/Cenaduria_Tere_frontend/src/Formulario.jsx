@@ -6,11 +6,25 @@ import Swal from 'sweetalert2'
 import { Cenaduria_Tere_backend } from 'declarations/Cenaduria_Tere_backend';
 import { useNavigate } from 'react-router-dom';
 
-
-export const Create = () => {
-    const [nombre, setNombre] = useState("")
-    const [asientos, setAsientos] = useState(0)
-    const [mesas, setMesas] = useState(0)
+export const Formulario = (
+    {
+        NúmeroReservación=null,
+        NombreComensal=null,
+        NúmeroAsientos=null,
+        NúmeroMesas=null,
+        Fecha=null,
+        Hora=null,
+        isEditable=null,
+        ListaReservacion=null,
+        setShow=null
+    }
+        
+)=> {
+    const [nombre, setNombre] = useState(NombreComensal ? NombreComensal:"")
+    const [asientos, setAsientos] = useState(NúmeroAsientos ? NúmeroAsientos: 0)
+    const [hora, setHora] = useState(Hora ? Hora:"")
+    const [fecha, setFecha] = useState(Fecha ? Fecha:"")
+    const [mesas, setMesas] = useState(NúmeroMesas ? NúmeroMesas: 0)
 
     const navigate = useNavigate();
 
@@ -32,10 +46,22 @@ export const Create = () => {
         setMesas(preMesas);
     }
 
+    const onChangeHora = (evento) => {
+        evento.preventDefault();
+        const preHora = evento.target.value;
+        setHora(preHora);
+    }
+
+    const onChangeFecha = (evento) => {
+        evento.preventDefault();
+        const preFecha = evento.target.value;
+        setFecha(preFecha);
+    }
+
     function agregarReservacion() {
         Swal.fire("Espera un momento...");
         Swal.showLoading()
-        Cenaduria_Tere_backend.addReserv(nombre, BigInt(asientos), BigInt(mesas)).then(rsv => {
+        Cenaduria_Tere_backend.addReserv(nombre, BigInt(asientos), BigInt(mesas), fecha, hora).then(rsv => {
             Swal.fire({
                 title: "¡Listo!",
                 text: "Se ha realizado la reservación con éxito.",
@@ -53,19 +79,45 @@ export const Create = () => {
         })
     };
 
+    function updateReservacion() {
+        Swal.fire("Espera un momento...");
+        Swal.showLoading()
+        Cenaduria_Tere_backend.actualizarReservacion(BigInt(NúmeroReservación), nombre, BigInt(asientos), BigInt(mesas), fecha, hora).then(() => {
+            Swal.fire({
+                title: "¡Listo!",
+                text: "Se ha actualizado la reservación con éxito.",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+            }).then(() =>{
+                setShow(false);
+                ListaReservacion();
+            }
+            )
+        }).catch(()=> {
+            Swal.fire({
+                title: "Oops!",
+                text: "Ha ocurrido un error. Intentalo más tarde.",
+                icon: "error",
+            });
+            console.log("Error al momento de actualizar la reservación.", err)
+        })
+    };
+
+    
 
     return (
         <Container>
             <Row>
                 <Col>
                     <Card>
-                        <Card.Title>Hacer una reservación</Card.Title>
+                        <Card.Title>{isEditable ? "Editar" : "Agregar"} una reservación</Card.Title>
                         <Card.Body>
                             <Form>
                                 <Row>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Nombre del Comensal</Form.Label>
-                                    <Form.Control name='nombre' onChange={onChangeNombre} type="text" placeholder="Nombre" />
+                                    <Form.Control defaultValue={nombre} name='nombre' disabled={isEditable ? true : false} onChange={onChangeNombre} type="text" placeholder="Nombre" required/>
                                     <Form.Text className="text-muted">
                                         Nombre de a quien se le va a anotar la reservación.
                                     </Form.Text>
@@ -74,7 +126,7 @@ export const Create = () => {
                                 <Row>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Número de sillas.</Form.Label>
-                                    <Form.Control name='asientos' onChange={onChangeAsientos} type="number" placeholder="Sillas" />
+                                    <Form.Control defaultValue={asientos} name='asientos' onChange={onChangeAsientos} type="number" placeholder="Sillas" required/>
                                     <Form.Text className="text-muted">
                                         Máximo 15 sillas.
                                     </Form.Text>
@@ -83,7 +135,7 @@ export const Create = () => {
                                 <Row>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Número de mesas.</Form.Label>
-                                    <Form.Control name='mesas' onChange={onChangeMesas} type="number" placeholder="Mesas" />
+                                    <Form.Control defaultValue={mesas} name='mesas' onChange={onChangeMesas} type="number" placeholder="Mesas" required/>
                                     <Form.Text className="text-muted">
                                         Máximo 4 mesas.
                                     </Form.Text>
@@ -93,25 +145,25 @@ export const Create = () => {
                                 <Row>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Día de la reservación.</Form.Label>
-                                    <Form.Control type="date" placeholder="Fecha" />
+                                    <Form.Control defaultValue={fecha} type="date" onChange={onChangeFecha} placeholder="Fecha" required/>
                                 </Form.Group>
                                 </Row>
 
                                 <Row>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Hora de la reservación.</Form.Label>
-                                    <Form.Control type="time" placeholder="Hora" />
+                                    <Form.Control defaultValue={hora} type="time"onChange={onChangeHora} placeholder="Hora" required/>
                                     <Form.Text className="text-muted">
                                         Horario de las 19:00 hrs hasta las 00:00 hrs del día siguiente.
                                     </Form.Text>
                                 </Form.Group>
+                                <Button variant="primary" onClick={isEditable ? updateReservacion : agregarReservacion}>
+                                        {isEditable ? "Editar" : "Guardar"}
+                                </Button>
+                                
                                 </Row>
 
-                                <Row>
-                                <Button variant="info" onClick={agregarReservacion}>
-                                    Enviar
-                                </Button>
-                                </Row>
+                                
                             </Form>
                         </Card.Body>
                     </Card>
@@ -123,4 +175,4 @@ export const Create = () => {
 
 
 
-export default Create;
+export default Formulario;

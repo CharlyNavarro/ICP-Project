@@ -1,4 +1,5 @@
 import Array "mo:base/Array";
+import Text "mo:base/Text";
 
 actor Cenaduria_Tere {
   
@@ -9,6 +10,8 @@ actor Cenaduria_Tere {
     nombre: Text; 
     asientos: Nat;
     mesas: Nat;
+    fecha: Text;
+    hora: Text;
   };
 
   var reservs: [Reservacion] = [
@@ -17,18 +20,22 @@ actor Cenaduria_Tere {
       nombre = "Erik";
       asientos = 5;
       mesas = 1;
+      fecha = "2024-07-06";
+      hora = "20:00";
     }
   ];
 
 
   //Agregar reservación
-  public func addReserv (nombre: Text, asientos: Nat, mesas: Nat, ) :async Text {
+  public func addReserv (nombre: Text, asientos: Nat, mesas: Nat, fecha: Text, hora: Text) :async Text {
     let nuevoNum = Array.size(reservs) +1;
     let nuevaReserv = {
       numero = nuevoNum;
       nombre = nombre;
       asientos = asientos;
       mesas = mesas;
+      fecha = fecha;
+      hora = hora;
     };
 
     reservs := Array.append <Reservacion> (reservs, [nuevaReserv]);
@@ -45,10 +52,13 @@ actor Cenaduria_Tere {
   public func getReservByNombre (nombre: Text) :async ?Reservacion {
     return Array.find<Reservacion>(reservs, func(rsv) {rsv.nombre == nombre});
   };
+    public func getReservById (numero: Nat) :async ?Reservacion {
+    return Array.find<Reservacion>(reservs, func(rsv) {rsv.numero == numero});
+  };
 
   //Actualizar reservaciones (Por favor papa dio que se termine rapido )
-  public func actualizarReservacion (numero: Nat, nombre: Text, asientos:Nat, mesas:Nat) : async Text {
-    let reservacionActualizar = Array.find <Reservacion> (reservs, func(rsv) {rsv.nombre == nombre});
+  public func actualizarReservacion (numero: Nat, nombre: Text, asientos:Nat, mesas:Nat, fecha: Text, hora: Text) : async Text {
+    let reservacionActualizar = Array.find <Reservacion> (reservs, func(rsv) {rsv.numero == numero});
 
     switch(reservacionActualizar) {
       case(null) { return "El comensal no está en la lista de reservación." };
@@ -58,9 +68,11 @@ actor Cenaduria_Tere {
           nombre = nombre;
           asientos = asientos;
           mesas = mesas;
+          fecha = fecha;
+          hora = hora;
         };
 
-        reservs := Array.map <Reservacion, Reservacion> (reservs, func(r){ if (r.nombre == nombre){reservacionActualizada} else { r } });
+        reservs := Array.map <Reservacion, Reservacion> (reservs, func(r){ if (r.numero == numero){reservacionActualizada} else { r } });
         return "La reservación de " # nombre # " ha sido actualizada.";
 
        };
@@ -68,10 +80,10 @@ actor Cenaduria_Tere {
   };
 
   //Cancelar reservacion
-  public func cancelarReservacion (nombre: Text) :async Text {
-    let reservacion = Array.find <Reservacion> (reservs, func(rsv) {rsv.nombre == nombre});
+  public func cancelarReservacion (numero: Nat) :async Text {
+    let reservacion = Array.find <Reservacion> (reservs, func(rsv) {rsv.numero == numero});
     if (reservacion != null) {
-      reservs := Array.filter <Reservacion> (reservs, func(rsv) {rsv.nombre != nombre});
+      reservs := Array.filter <Reservacion> (reservs, func(rsv) {rsv.numero != numero});
       return "La reservación ha sido cancelada con éxito";
     } else {
       return "Hubo un error. Intentelo más tarde.";
