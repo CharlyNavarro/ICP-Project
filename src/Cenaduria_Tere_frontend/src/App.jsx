@@ -4,6 +4,7 @@ import {Container, Row, Card, Table, Button, Col, Modal} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2'
 import Formulario from './Formulario';
+import Image from 'react-bootstrap/Image';
 
 function App() {
   const [reservs, setReservs] = useState([]);
@@ -114,6 +115,7 @@ function App() {
         </Modal.Body>
         
       </Modal>
+      <Image src="RegistrReserv.jpg" fluid/>;
   </Container>
   );
 }
